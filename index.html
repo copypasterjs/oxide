@@ -10,7 +10,7 @@
             text-align: center;
             font-family: Arial, sans-serif;
             padding: 20px;
-            background: linear-gradient(135deg, #1e3c72, #2a5298); /* Градиентный фон */
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
             color: white;
             height: 100vh;
             display: flex;
@@ -46,6 +46,10 @@
             background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
             display: none;
+            width: 90%;
+            max-width: 400px;
+            text-align: left;
+            padding: 15px;
         }
     </style>
 </head>
@@ -67,16 +71,14 @@
             eventsContainer.style.display = "block";
 
             try {
-                const response = await fetch("https://copypasterjs.github.io/oxide/events.json");
+                const response = await fetch("http://ТВОЙ_IP:5000/events");
                 const events = await response.json();
 
                 let html = "<h3>📅 Ближайшие события:</h3>";
                 for (const server in events) {
                     html += `<b>🔹 ${server}</b><br>`;
-                    for (const event of events[server]) {
-                        html += `📌 ${event.name} - 🕒 ${event.time} (через ${event.time_left})<br>`;
-                    }
-                    html += "<br>";
+                    html += `📌 ${events[server].event}<br>`;
+                    html += `🕒 ${events[server].time} (через ${events[server].time_left})<br><br>`;
                 }
 
                 eventsContainer.innerHTML = html;
