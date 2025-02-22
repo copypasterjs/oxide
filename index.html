@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Web App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            background: #0088cc;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h2>🚀 Telegram Web App</h2>
+    <p>Это всплывающее меню в Telegram!</p>
+    
+    <button onclick="Telegram.WebApp.close()">Закрыть</button>
+
+    <script>
+        Telegram.WebApp.expand(); // Делаем Web App полноэкранным
+    </script>
+</body>
+</html>
