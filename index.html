@@ -44,8 +44,8 @@
             }
         }
 
-        .client-container {
-            display: flex;
+        .client-container, .config-container {
+            display: none;
             flex-wrap: wrap;
             justify-content: center;
             gap: 20px;
@@ -53,7 +53,11 @@
             width: 100%;
         }
 
-        .client-box {
+        .client-container.active, .config-container.active {
+            display: flex;
+        }
+
+        .client-box, .config-box {
             background: linear-gradient(45deg, #3a3a3a, #5a5a5a);
             border-radius: 15px;
             padding: 20px;
@@ -65,12 +69,12 @@
             box-shadow: 0 0 15px rgba(211, 211, 211, 0.3);
         }
 
-        .client-box:hover {
+        .client-box:hover, .config-box:hover {
             transform: scale(1.05);
             box-shadow: 0 0 25px rgba(211, 211, 211, 0.5);
         }
 
-        .client-box h2 {
+        .client-box h2, .config-box h2 {
             font-size: clamp(1.2rem, 4vw, 1.5rem);
             text-transform: uppercase;
             letter-spacing: 2px;
@@ -78,13 +82,13 @@
             animation: glow 2s ease-in-out infinite alternate;
         }
 
-        .client-box p {
+        .client-box p, .config-box p {
             font-size: clamp(0.9rem, 3vw, 1rem);
             color: #b0b0b0;
             margin-bottom: 10px;
         }
 
-        .client-box .platform {
+        .client-box .platform, .config-box .price {
             font-size: clamp(0.8rem, 2.5vw, 0.9rem);
             color: #ffffff;
             font-weight: bold;
@@ -140,16 +144,31 @@
             z-index: 10;
         }
 
-        .online-indicator:hover {
+        .category-selector {
+            position: fixed;
+            top: 10px;
+            right: clamp(106px, 20vw, 126px); /* ~6cm gap (96px + 10px base) */
+            display: flex;
+            align-items: center;
+            padding: clamp(8px, 2vw, 10px) clamp(15px, 4vw, 20px);
+            background: linear-gradient(45deg, #1a3c34, #2a6b5a);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            touch-action: manipulation;
+            z-index: 10;
+        }
+
+        .online-indicator:hover, .category-selector:hover {
             transform: scale(1.05);
             box-shadow: 0 0 15px rgba(42, 107, 90, 0.7);
         }
 
-        .online-indicator:active {
+        .online-indicator:active, .category-selector:active {
             transform: scale(0.95);
         }
 
-        .online-indicator svg {
+        .online-indicator svg, .category-selector svg {
             width: clamp(16px, 4vw, 20px);
             height: clamp(16px, 4vw, 20px);
             margin-right: 8px;
@@ -157,7 +176,7 @@
             filter: drop-shadow(0 0 5px rgba(52, 199, 89, 0.7));
         }
 
-        .online-indicator span {
+        .online-indicator span, .category-selector span {
             font-size: clamp(0.9rem, 3vw, 1rem);
             font-weight: bold;
             color: #ffffff;
@@ -207,13 +226,17 @@
         }
 
         @media (max-width: 900px) {
-            .client-container {
+            .client-container, .config-container {
                 flex-direction: column;
                 align-items: center;
             }
 
-            .client-box {
+            .client-box, .config-box {
                 width: clamp(200px, 80vw, 300px);
+            }
+
+            .category-selector {
+                right: clamp(96px, 22vw, 116px); /* Adjusted for smaller screens */
             }
         }
 
@@ -226,6 +249,11 @@
             .online-indicator {
                 top: 10px;
                 right: 10px;
+            }
+
+            .category-selector {
+                top: 10px;
+                right: clamp(91px, 20vw, 111px); /* Adjusted for mobile */
             }
 
             .profile-box {
@@ -248,7 +276,7 @@
 </head>
 <body>
     <h1 class="title">VestHVH</h1>
-    <div class="client-container">
+    <div class="client-container active" id="mainContainer">
         <div class="client-box" onclick="alert('Apollon Client selected!')">
             <h2>Apollon Client</h2>
             <p>Free cheat client with good workarounds for anarchic servers.</p>
@@ -264,6 +292,29 @@
             <p>Free cheat client with the best Combat & Movement bypass categories.</p>
             <div class="platform">Win10</div>
         </div>
+    </div>
+    <div class="config-container" id="configContainer">
+        <div class="config-box" onclick="alert('CONFIG NEVERTIME selected!')">
+            <h2>CONFIG NEVERTIME</h2>
+            <p>Optimized config for stable performance.</p>
+            <div class="price">59₽</div>
+        </div>
+        <div class="config-box" onclick="alert('CONFIG PHOENIXPE selected!')">
+            <h2>CONFIG PHOENIXPE</h2>
+            <p>Balanced config for versatile gameplay.</p>
+            <div class="price">109₽</div>
+        </div>
+        <div class="config-box" onclick="alert('CONFIG FRIZMINE selected!')">
+            <h2>CONFIG FRIZMINE</h2>
+            <p>Premium config for advanced players.</p>
+            <div class="price">159₽</div>
+        </div>
+    </div>
+    <div class="category-selector" id="categorySelector">
+        <svg viewBox="0 0 24 24">
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+        </svg>
+        <span id="categoryText">MAIN</span>
     </div>
     <div class="online-indicator" id="onlineIndicator">
         <svg viewBox="0 0 24 24">
@@ -300,14 +351,11 @@
         let currentCount = 25;
         let targetCount = currentCount;
         function updateOnlineCount() {
-            // Decide whether to increase or decrease
             if (Math.random() > 0.5 && targetCount < 50) {
                 targetCount = Math.min(50, targetCount + Math.floor(Math.random() * 5 + 1));
             } else if (targetCount > 1) {
                 targetCount = Math.max(1, targetCount - Math.floor(Math.random() * 5 + 1));
             }
-
-            // Smoothly transition to target count
             const step = currentCount < targetCount ? 1 : -1;
             const interval = setInterval(() => {
                 if (currentCount === targetCount) {
@@ -316,10 +364,30 @@
                 }
                 currentCount += step;
                 onlineCountElement.textContent = currentCount;
-            }, 100); // Adjust every 100ms for smooth effect
+            }, 100);
         }
         updateOnlineCount();
-        setInterval(updateOnlineCount, 5000); // Update target every 5 seconds
+        setInterval(updateOnlineCount, 5000);
+
+        // Category toggle
+        const categorySelector = document.getElementById('categorySelector');
+        const categoryText = document.getElementById('categoryText');
+        const mainContainer = document.getElementById('mainContainer');
+        const configContainer = document.getElementById('configContainer');
+        let currentCategory = 'MAIN';
+
+        categorySelector.addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentCategory = currentCategory === 'MAIN' ? 'CONFIG' : 'MAIN';
+            categoryText.textContent = currentCategory;
+            if (currentCategory === 'MAIN') {
+                mainContainer.classList.add('active');
+                configContainer.classList.remove('active');
+            } else {
+                mainContainer.classList.remove('active');
+                configContainer.classList.add('active');
+            }
+        });
 
         // Online indicator toggle for profile box
         const onlineIndicator = document.getElementById('onlineIndicator');
